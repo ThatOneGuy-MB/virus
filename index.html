@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Notification Spam</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f0f0f0;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+        .popup {
+            position: fixed;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            max-width: 300px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none;
+            text-align: left;
+        }
+        .popup.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="triggerAdSpam()">Allow Notifications</button>
+
+    <script>
+        // Array of ad messages, including NSFW-themed ones
+        const adMessages = [
+            { title: "Tech Deals!", body: "Grab the latest smartphones at 40% off at TechTrendz!" },
+            { title: "Fashion Frenzy!", body: "Exclusive clothing deals at StyleVibe!" },
+            { title: "Hot NSFW Content!", body: "Join our adult platform for exclusive spicy videos!" },
+            { title: "Car Bargains!", body: "Drive away with 0% financing at AutoZone!" },
+            { title: "NSFW VIP Access!", body: "Unlock premium adult entertainment at NaughtyHub!" },
+            { title: "Eco Products!", body: "Shop sustainable goods at GreenMart!" },
+            { title: "Adult Fun Awaits!", body: "Explore NSFW content with a $5 trial at SpicyZone!" },
+            { title: "Gadget Mania!", body: "Best prices on electronics at ElectroShop!" },
+            { title: "Steamy Deals!", body: "NSFW subscriptions starting at $9.99/month!" },
+            { title: "Fitness Gear!", body: "Get fit with 20% off at ActiveLife!" }
+        ];
+
+        async function triggerAdSpam() {
+            // Request notification permission
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                alert('You need to allow notifications to see the ads!');
+                return;
+            }
+
+            // Spam 100 browser notifications
+            for (let i = 0; i < 100; i++) {
+                const ad = adMessages[Math.floor(Math.random() * adMessages.length)];
+                new Notification(ad.title, {
+                    body: ad.body,
+                    icon: 'https://via.placeholder.com/64'
+                });
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            // Spam 100 on-screen pop-ups
+            for (let i = 0; i < 100; i++) {
+                const ad = adMessages[Math.floor(Math.random() * adMessages.length)];
+                createPopup(ad.title, ad.body);
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            alert('Ad spam unleashed! Check your notifications and screen!');
+        }
+
+        function createPopup(title, body) {
+            // Create popup element
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            popup.innerHTML = `<strong>${title}</strong><br>${body}`;
+
+            // Set random position
+            const maxX = window.innerWidth - 300; // Account for popup width
+            const maxY = window.innerHeight - 100; // Account for popup height
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+            popup.style.left = `${x}px`;
+            popup.style.top = `${y}px`;
+
+            // Add to document
+            document.body.appendChild(popup);
+
+            // Show popup
+            setTimeout(() => {
+                popup.classList.add('show');
+            }, 10);
+
+            // Remove popup after 3 seconds
+            setTimeout(() => {
+                popup.style.opacity = '0';
+                setTimeout(() => {
+                    popup.remove();
+                }, 500); // Match transition duration
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
