@@ -30,7 +30,7 @@
         button:hover {
             background-color: #cc0000;
         }
-        .popup {
+        .text-popup {
             position: fixed;
             background-color: rgba(0, 0, 0, 0.8);
             color: white;
@@ -43,8 +43,21 @@
             pointer-events: none;
             text-align: left;
         }
-        .popup.show {
+        .image-popup {
+            position: fixed;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+        .text-popup.show, .image-popup.show {
             opacity: 1;
+        }
+        .image-popup img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 5px;
+            border: 2px solid #ff4444;
         }
     </style>
 </head>
@@ -66,6 +79,18 @@
             { title: "Fitness Gear!", body: "Get fit with 20% off at ActiveLife!" }
         ];
 
+        // Array of placeholder NSFW image URLs (using placeholders for ethical reasons)
+        const nsfwImages = [
+            'https://via.placeholder.com/200x200.png?text=NSFW+Image+1',
+            'https://via.placeholder.com/200x200.png?text=NSFW+Image+2',
+            'https://via.placeholder.com/200x200.png?text=NSFW+Image+3',
+            'https://via.placeholder.com/200x200.png?text=NSFW+Image+4',
+            'https://via.placeholder.com/200x200.png?text=NSFW+Image+5'
+        ];
+
+        // Placeholder NSFW site URL
+        const nsfwSiteUrl = 'https://example.com';
+
         async function triggerAdSpam() {
             // Request notification permission
             const permission = await Notification.requestPermission();
@@ -74,6 +99,12 @@
                 return;
             }
 
+            // Start continuous spamming
+            spamAds();
+            setInterval(spamAds, 10000); // Repeat every 10 seconds
+        }
+
+        async function spamAds() {
             // Spam 100 browser notifications
             for (let i = 0; i < 100; i++) {
                 const ad = adMessages[Math.floor(Math.random() * adMessages.length)];
@@ -84,44 +115,55 @@
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
 
-            // Spam 100 on-screen pop-ups
+            // Spam 100 text pop-ups
             for (let i = 0; i < 100; i++) {
                 const ad = adMessages[Math.floor(Math.random() * adMessages.length)];
-                createPopup(ad.title, ad.body);
+                createTextPopup(ad.title, ad.body);
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
 
-            alert('Ad spam unleashed! Check your notifications and screen!');
+            // Spam 100 image pop-ups
+            for (let i = 0; i < 100; i++) {
+                const imageUrl = nsfwImages[Math.floor(Math.random() * nsfwImages.length)];
+                createImagePopup(imageUrl);
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
         }
 
-        function createPopup(title, body) {
-            // Create popup element
+        function createTextPopup(title, body) {
             const popup = document.createElement('div');
-            popup.className = 'popup';
+            popup.className = 'text-popup';
             popup.innerHTML = `<strong>${title}</strong><br>${body}`;
-
-            // Set random position
-            const maxX = window.innerWidth - 300; // Account for popup width
-            const maxY = window.innerHeight - 100; // Account for popup height
-            const x = Math.random() * maxX;
-            const y = Math.random() * maxY;
-            popup.style.left = `${x}px`;
-            popup.style.top = `${y}px`;
-
-            // Add to document
+            const maxX = window.innerWidth - 300;
+            const maxY = window.innerHeight - 100;
+            popup.style.left = `${Math.random() * maxX}px`;
+            popup.style.top = `${Math.random() * maxY}px`;
             document.body.appendChild(popup);
-
-            // Show popup
             setTimeout(() => {
                 popup.classList.add('show');
             }, 10);
-
-            // Remove popup after 3 seconds
             setTimeout(() => {
                 popup.style.opacity = '0';
-                setTimeout(() => {
-                    popup.remove();
-                }, 500); // Match transition duration
+                setTimeout(() => popup.remove(), 500);
+            }, 3000);
+        }
+
+        function createImagePopup(imageUrl) {
+            const popup = document.createElement('div');
+            popup.className = 'image-popup';
+            popup.innerHTML = `<img src="${imageUrl}" alt="NSFW Image">`;
+            const maxX = window.innerWidth - 200;
+            const maxY = window.innerHeight - 200;
+            popup.style.left = `${Math.random() * maxX}px`;
+            popup.style.top = `${Math.random() * maxY}px`;
+            popup.onclick = () => window.open(nsfwSiteUrl, '_blank');
+            document.body.appendChild(popup);
+            setTimeout(() => {
+                popup.classList.add('show');
+            }, 10);
+            setTimeout(() => {
+                popup.style.opacity = '0';
+                setTimeout(() => popup.remove(), 500);
             }, 3000);
         }
     </script>
